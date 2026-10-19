@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Verb Hanamaru! どうしでハナマル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FDFCF7; --grid:#DDE9F3; --ink:#23305A; --muted:#5E6A8C;
+  --card:#FFFFFF; --edge:#23305A; --red:#E8463A; --yellow:#FFD23F;
+  --green:#2E9E6B; --blue:#3A7BD5; --soft:#F1F5FA;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1E3A2E; --grid:rgba(255,255,255,.05); --ink:#F4F1E4; --muted:#B9C9BC;
+    --card:#2A4C3D; --edge:#F4F1E4; --red:#FF7A6B; --yellow:#FFE070;
+    --green:#7FE0A8; --blue:#8FB8FF; --soft:#25443A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1E3A2E; --grid:rgba(255,255,255,.05); --ink:#F4F1E4; --muted:#B9C9BC;
+  --card:#2A4C3D; --edge:#F4F1E4; --red:#FF7A6B; --yellow:#FFE070;
+  --green:#7FE0A8; --blue:#8FB8FF; --soft:#25443A; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;min-height:100%}
+body{
+  background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+  color:var(--ink);
+  font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  font-weight:500;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:4px solid var(--blue);outline-offset:3px}
+.wrap{max-width:860px;margin:0 auto;padding:18px 16px 40px}
+
+/* sticker style: thick outline + solid offset shadow */
+.stk{background:var(--card);border:3px solid var(--edge);border-radius:18px;box-shadow:4px 5px 0 var(--edge);transition:transform .08s,box-shadow .08s}
+button.stk:active{transform:translate(3px,4px);box-shadow:1px 1px 0 var(--edge)}
+
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.logo{font-weight:800;font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.1;margin:0;letter-spacing:-.01em}
+.logo small{display:block;font-size:.5em;color:var(--muted);font-weight:500;letter-spacing:0}
+.home-btn{margin-left:auto;padding:8px 16px;font-weight:800}
+
+.sets{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 22px}
+.chip{padding:8px 14px;border-radius:999px;border:3px solid var(--edge);background:var(--card);font-weight:800;font-size:1rem}
+.chip[aria-pressed="true"]{background:var(--yellow);color:#23305A}
+.setnote{color:var(--muted);font-size:.95rem;margin:0 0 6px}
+
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.mode{padding:18px;text-align:left;display:flex;gap:14px;align-items:center}
+.mode .big{font-size:2.6rem;line-height:1}
+.mode b{display:block;font-size:1.3rem;font-weight:800}
+.mode span{color:var(--muted);font-size:.95rem}
+
+/* flashcards */
+.fc-wrap{perspective:1200px;margin:6px auto 18px;max-width:520px}
+.fc{position:relative;width:100%;aspect-ratio:4/3.2;transform-style:preserve-3d;transition:transform .45s;cursor:pointer;border:none;background:none;padding:0}
+.fc.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px}
+.face.back{transform:rotateY(180deg);background:var(--soft)}
+.emoji{font-size:clamp(5rem,20vw,8rem);line-height:1.1}
+.en{font-size:clamp(2.2rem,8vw,3.4rem);font-weight:800;letter-spacing:.01em}
+.ja{font-size:clamp(1.6rem,6vw,2.4rem);font-weight:800}
+.tap{color:var(--muted);font-size:.9rem}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;align-items:center}
+.btn{padding:12px 20px;font-weight:800;font-size:1.1rem}
+.btn.yellow{background:var(--yellow);color:#23305A}
+.count{font-weight:800;min-width:70px;text-align:center}
+
+/* quiz */
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-weight:800}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--edge)}
+.dot.ok{background:var(--red);border-color:var(--red)}
+.dot.no{background:var(--muted);border-color:var(--muted)}
+.dot.now{background:var(--yellow)}
+.prompt{position:relative;padding:18px;text-align:center;margin-bottom:18px;min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{padding:16px 10px;font-size:clamp(1.3rem,4.5vw,1.8rem);font-weight:800;min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.choice .ce{font-size:2.6rem;line-height:1.1}
+.choice .cj{font-size:1.05rem}
+.choice.right{background:var(--green);color:#fff;border-color:var(--green)}
+.choice.wrong{opacity:.4}
+.listen-btn{font-size:4rem;width:130px;height:130px;border-radius:50%;background:var(--yellow);color:#23305A}
+.hintbtn{position:absolute;top:10px;right:10px;padding:4px 10px;font-size:.85rem;border-radius:999px;border:2px solid var(--edge);background:var(--card);font-weight:800}
+
+/* hanamaru */
+.hana{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.hana svg{width:min(230px,60%);height:auto;overflow:visible}
+.hana path{fill:none;stroke:var(--red);stroke-width:7;stroke-linecap:round;stroke-dasharray:900;stroke-dashoffset:900;animation:draw .7s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* results */
+.result{text-align:center;padding:26px 16px}
+.result .score{font-size:4rem;font-weight:800;line-height:1}
+.marus{font-size:2rem;letter-spacing:.1em;margin:10px 0;color:var(--red)}
+
+/* act it out */
+.act{text-align:center;padding:24px 16px;margin-bottom:18px}
+.act .emoji{font-size:clamp(6rem,26vw,10rem)}
+.act .en{font-size:clamp(3rem,12vw,5rem)}
+.hidden-word{filter:blur(14px);user-select:none}
+.say{font-size:1.2rem;color:var(--muted);margin-top:6px}
+
+/* word list */
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.tile{padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tile .te{font-size:2.4rem;line-height:1.2}
+.tile .tn{font-weight:800;font-size:1.2rem}
+.tile .tj{font-size:.9rem;color:var(--muted)}
+/* team race */
+.track{padding:8px 12px;margin-bottom:16px}
+.lane{display:flex;align-items:center;gap:10px;height:52px}
+.lane+.lane{border-top:2px dashed color-mix(in srgb,var(--muted) 35%,transparent)}
+.lane-score{width:2.2rem;height:2.2rem;border-radius:50%;background:var(--tc);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;font-size:1.1rem}
+.runway{position:relative;flex:1;height:100%}
+.runway::before{content:"";position:absolute;left:0;right:1.6rem;top:50%;height:10px;border-radius:5px;background:var(--tc);opacity:.25;transform:translateY(-50%)}
+.runner{position:absolute;top:50%;transform:translateY(-50%);font-size:2.3rem;line-height:1;transition:left .7s cubic-bezier(.3,1.4,.5,1)}
+.r-in{display:inline-block;transform:scaleX(-1)}
+.hop .r-in{animation:hop .35s 2}
+@keyframes hop{0%,100%{transform:scaleX(-1) translateY(0)}50%{transform:scaleX(-1) translateY(-14px)}}
+.flag{position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.8rem}
+.choice{position:relative}
+.letter{position:absolute;top:6px;left:8px;width:1.7rem;height:1.7rem;border-radius:50%;border:2px solid currentColor;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.team-chip[aria-pressed="true"]{background:var(--tc);border-color:var(--tc);color:#fff}
+.ranks{display:flex;flex-direction:column;gap:4px;font-size:1.2rem;font-weight:800;margin:12px 0}
+button:disabled{opacity:.6;cursor:default}
+@media (prefers-reduced-motion:reduce){.runner{transition:none}.hop .r-in{animation:none}}
+h2{font-size:1.5rem;font-weight:800;margin:0 0 12px}
+.sub{color:var(--muted);margin:-6px 0 14px}
+
+@media (prefers-reduced-motion:reduce){
+  .fc{transition:none}
+  .hana path{animation:none;stroke-dashoffset:0}
+  .stk{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 class="logo">Verb Hanamaru!<small>どうしで ハナマルを あつめよう</small></h1>
+    <button class="stk home-btn" id="homeBtn" onclick="go('home')" hidden>🏠 Home</button>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+const VERBS=[
+["bake","🍞","やく（パンなど）"],["buy","🛒","かう"],["catch","⚾","キャッチする・とる"],["clean","🧹","そうじする"],["climb","🧗","のぼる"],
+["come","👋","くる"],["cook","🍳","りょうりする"],["cut","✂️","切る（きる）"],["dance","💃","おどる"],["draw","🎨","絵（え）をかく"],
+["drink","🥤","のむ"],["eat","🍙","たべる"],["enjoy","😄","たのしむ"],["feed","🐰","えさをあげる"],["fly","🕊️","とぶ（空を）"],
+["get","🎁","もらう・手にいれる"],["go","🚌","いく"],["have","🎒","もっている"],["help","🤝","てつだう・たすける"],["jog","👟","ジョギングする"],
+["join","🙋","さんかする"],["jump","🦘","ジャンプする"],["like","👍","すき"],["listen","👂","きく"],["look","👀","（よく）見る"],
+["love","❤️","大すき・あいする"],["make","🛠️","つくる"],["play","⚽","あそぶ・（スポーツを）する"],["practice","🎹","れんしゅうする"],["read","📖","よむ"],
+["ride","🚲","のる"],["run","🏃","はしる"],["see","🔭","見える・見る"],["sing","🎤","うたう"],["skateboard","🛹","スケートボードをする"],
+["ski","⛷️","スキーをする"],["speak","🗣️","話す（はなす）"],["stop","🛑","とまる・やめる"],["study","📚","べんきょうする"],["swim","🏊","およぐ"],
+["talk","💬","おしゃべりする"],["think","🤔","考える（かんがえる）"],["touch","👆","さわる"],["turn","↪️","まがる・まわる"],["walk","🚶","あるく"],
+["want","🤤🍦","ほしい・〜したい"],["wash","🧼","あらう"],["water","💧","水（みず）をやる"],["wear","👕","着る（きる）"],["write","✏️","字（じ）を書く"]
+].map(([en,e,ja])=>({en,e,ja}));
+
+const S={set:0,screen:'home',fc:{i:0,flip:false,jaFirst:false,order:null},hint:true,Q:null,act:null};
+const app=document.getElementById('app');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pool=()=>S.set===5?VERBS:VERBS.slice(S.set*10,S.set*10+10);
+const setName=()=>S.set===5?'All 50 words':`Set ${S.set+1}`;
+
+let voice=null;
+function pickVoice(){
+  if(!('speechSynthesis' in window))return;
+  const vs=speechSynthesis.getVoices();
+  voice=vs.find(v=>/en-US/i.test(v.lang)&&/Samantha|Google|Jenny|Aria/i.test(v.name))||vs.find(v=>/^en/i.test(v.lang))||null;
+}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function say(text){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US';u.rate=.8;if(voice)u.voice=voice;
+  speechSynthesis.speak(u);
+}
+
+const HANA='<div class="hana"><svg viewBox="0 0 140 120"><path d="M70 18 C118 16 128 92 70 100 C18 106 10 30 64 24 C104 20 110 80 72 86 C44 90 40 50 68 46"/></svg></div>';
+
+function go(screen){
+  S.screen=screen;
+  document.getElementById('homeBtn').hidden=screen==='home';
+  if(screen==='flash'){S.fc={...S.fc,i:0,flip:false,order:pool().slice()}}
+  render();window.scrollTo(0,0);
+}
+function render(){
+  ({home:renderHome,flash:renderFlash,quiz:renderQuiz,list:renderList,raceSetup:renderRaceSetup,race:renderRace})[S.screen]();
+}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const chips=[0,1,2,3,4,5].map(n=>`<button class="chip" aria-pressed="${S.set===n}" onclick="S.set=${n};render()">${n===5?'All 50':'Set '+(n+1)}</button>`).join('');
+  const preview=pool().slice(0,10).map(v=>v.e).join(' ')+(S.set===5?' …':'');
+  app.innerHTML=`
+  <p class="setnote">Choose a set — 10 words each. セットをえらんでね。</p>
+  <div class="sets">${chips}</div>
+  <p class="setnote" style="font-size:1.4rem;margin-bottom:18px">${preview}</p>
+  <div class="modes">
+    <button class="stk mode" onclick="go('flash')"><span class="big">🃏</span><div><b>Learn</b><span>カードでおぼえよう</span></div></button>
+    <button class="stk mode" onclick="startQuiz('pic')"><span class="big">🖼️</span><div><b>Picture quiz</b><span>えを見て、英語をえらぼう</span></div></button>
+    <button class="stk mode" onclick="startQuiz('listen')"><span class="big">👂</span><div><b>Listening quiz</b><span>きいて、いみをえらぼう</span></div></button>
+    <button class="stk mode" onclick="go('raceSetup')"><span class="big">🏁</span><div><b>Team race</b><span>チームできょうそう！</span></div></button>
+    <button class="stk mode" onclick="go('list')"><span class="big">📋</span><div><b>Word list</b><span>ぜんぶ見る・きく</span></div></button>
+  </div>`;
+}
+
+/* ---------- FLASHCARDS ---------- */
+function renderFlash(){
+  const F=S.fc,list=F.order,v=list[F.i];
+  const front=F.jaFirst?`<div class="ja">${v.ja}</div>`:`<div class="en">${v.en}</div>`;
+  const back=F.jaFirst?`<div class="en">${v.en}</div>`:`<div class="ja">${v.ja}</div>`;
+  app.innerHTML=`
+  <h2>Learn: ${setName()}</h2>
+  <p class="sub">Tap the card to flip. カードをタップしてね。</p>
+  <div class="fc-wrap">
+    <button class="fc ${F.flip?'flip':''}" id="card" aria-label="Flip card">
+      <div class="face stk"><div class="emoji">${v.e}</div>${front}<div class="tap">tap ↺</div></div>
+      <div class="face back stk"><div class="emoji">${v.e}</div>${back}<div class="en" style="font-size:1.4rem;color:var(--muted)">${F.jaFirst?'':v.en}</div></div>
+    </button>
+  </div>
+  <div class="row" style="margin-bottom:14px">
+    <button class="stk btn" onclick="fcMove(-1)" aria-label="Previous">◀</button>
+    <span class="count">${F.i+1} / ${list.length}</span>
+    <button class="stk btn" onclick="fcMove(1)" aria-label="Next">▶</button>
+  </div>
+  <div class="row">
+    <button class="stk btn yellow" onclick="say('${v.en}')">🔊 Listen</button>
+    <button class="stk btn" onclick="S.fc.order=shuffle(S.fc.order);S.fc.i=0;S.fc.flip=false;render()">🔀 Shuffle</button>
+    <button class="stk btn" onclick="S.fc.jaFirst=!S.fc.jaFirst;S.fc.flip=false;render()">${F.jaFirst?'A → あ':'あ → A'}</button>
+  </div>`;
+  document.getElementById('card').onclick=()=>{
+    S.fc.flip=!S.fc.flip;
+    document.getElementById('card').classList.toggle('flip',S.fc.flip);
+    if(S.fc.flip!==S.fc.jaFirst)say(v.en);
+  };
+}
+function fcMove(d){
+  const n=S.fc.order.length;
+  S.fc.i=(S.fc.i+d+n)%n;S.fc.flip=false;render();
+  if(!S.fc.jaFirst)say(S.fc.order[S.fc.i].en);
+}
+
+/* ---------- QUIZ ---------- */
+function startQuiz(type){
+  const list=shuffle(pool()).slice(0,10);
+  S.Q={type,list,i:0,score:0,results:[],locked:false,choices:null,picked:null};
+  S.screen='quiz';document.getElementById('homeBtn').hidden=false;
+  makeChoices();render();window.scrollTo(0,0);
+}
+function makeChoices(){
+  const Q=S.Q,ans=Q.list[Q.i];
+  const src=pool().length>=4?pool():VERBS;
+  Q.choices=shuffle([ans,...shuffle(src.filter(v=>v!==ans)).slice(0,3)]);
+  Q.picked=null;Q.locked=false;
+}
+function renderQuiz(){
+  const Q=S.Q;
+  if(Q.i>=Q.list.length)return renderResult();
+  const ans=Q.list[Q.i];
+  const dots=Q.list.map((_,k)=>`<span class="dot ${k<Q.i?(Q.results[k]?'ok':'no'):k===Q.i?'now':''}"></span>`).join('');
+  let prompt,choices;
+  if(Q.type==='pic'){
+    prompt=`<button class="hintbtn" onclick="S.hint=!S.hint;render()">${S.hint?'日本語 ON':'日本語 OFF'}</button>
+      <div class="emoji">${ans.e}</div>${S.hint?`<div class="ja" style="font-size:1.5rem">${ans.ja}</div>`:''}
+      <div class="tap" style="margin-top:6px">Which word? どの英語かな？</div>`;
+    choices=Q.choices.map((c,k)=>`<button class="stk choice ${cls(c,k)}" onclick="pick(${k})">${c.en}</button>`).join('');
+  }else{
+    prompt=`<button class="stk listen-btn" onclick="say('${ans.en}')" aria-label="Play the word">🔊</button>
+      <div class="tap" style="margin-top:12px">Listen and choose. きいて、えらぼう。</div>`;
+    choices=Q.choices.map((c,k)=>`<button class="stk choice ${cls(c,k)}" onclick="pick(${k})"><span class="ce">${c.e}</span><span class="cj">${c.ja}</span>${Q.locked?`<span class="cj">${c.en}</span>`:''}</button>`).join('');
+  }
+  const showHana=Q.locked&&Q.choices[Q.picked]===ans;
+  app.innerHTML=`
+  <div class="qtop"><span>${Q.type==='pic'?'🖼️ Picture quiz':'👂 Listening quiz'} · ${setName()}</span><span>⭕ ${Q.score}</span></div>
+  <div class="dots" style="margin-bottom:14px">${dots}</div>
+  <div class="stk prompt">${prompt}${showHana?HANA:''}</div>
+  <div class="choices">${choices}</div>`;
+  if(Q.type==='listen'&&!Q.locked&&!Q._spoke){Q._spoke=true;setTimeout(()=>say(ans.en),250)}
+}
+function cls(c,k){
+  const Q=S.Q;if(!Q.locked)return'';
+  const ans=Q.list[Q.i];
+  if(c===ans)return'right';
+  return'wrong';
+}
+function pick(k){
+  const Q=S.Q;if(Q.locked)return;
+  Q.locked=true;Q.picked=k;
+  const ans=Q.list[Q.i],ok=Q.choices[k]===ans;
+  Q.results[Q.i]=ok;if(ok)Q.score++;
+  render();say(ans.en);
+  setTimeout(()=>{Q.i++;Q._spoke=false;if(Q.i<Q.list.length)makeChoices();render()},ok?1400:2300);
+}
+function renderResult(){
+  const Q=S.Q,n=Q.list.length,s=Q.score;
+  const msg=s===n?'Perfect! パーフェクト！':s>=n*.7?'Great job! よくできました！':s>=n*.4?'Good try! もう少し！':'Let’s practice more! いっしょにれんしゅうしよう！';
+  const missed=Q.list.filter((_,k)=>!Q.results[k]);
+  app.innerHTML=`
+  <div class="stk result">
+    <div style="position:relative;display:inline-block;padding:20px 30px">
+      <div class="score">${s} / ${n}</div>${s>=n*.7?HANA:''}
+    </div>
+    <div class="marus">${'⭕'.repeat(s)}</div>
+    <h2>${msg}</h2>
+    ${missed.length?`<p class="sub" style="margin-top:8px">Practice these: ${missed.map(v=>`<button class="chip" style="margin:3px" onclick="say('${v.en}')">${v.e} ${v.en}</button>`).join('')}</p>`:''}
+    <div class="row" style="margin-top:16px">
+      <button class="stk btn yellow" onclick="startQuiz('${Q.type}')">🔁 Play again</button>
+      <button class="stk btn" onclick="go('home')">🏠 Home</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- TEAM RACE ---------- */
+const TEAMS=[["🐇","Rabbit","#E8463A"],["🐢","Turtle","#2E9E6B"],["🐧","Penguin","#3A7BD5"],["🐥","Chick","#D99A00"],["🐱","Cat","#8A55C9"],["🦊","Fox","#F07B22"]];
+S.rs={n:4,type:'mix',goal:8};
+function renderRaceSetup(){
+  const ch=(key,val,label)=>`<button class="chip" aria-pressed="${S.rs[key]===val}" onclick="S.rs.${key}=${typeof val==='string'?`'${val}'`:val};render()">${label}</button>`;
+  app.innerHTML=`
+  <h2>Team race: ${setName()}</h2>
+  <p class="sub">Teams write their answer (A, B, C or D). The teacher shows the answer and taps the teams that got it right. チームでこたえてね！</p>
+  <div class="stk" style="padding:18px;margin-bottom:18px">
+    <p class="setnote">Teams チームの数</p>
+    <div class="sets" style="margin-bottom:8px">${[2,3,4,5,6].map(n=>ch('n',n,n)).join('')}</div>
+    <div style="font-size:2.2rem;display:flex;gap:14px;margin-bottom:18px">${TEAMS.slice(0,S.rs.n).map(t=>`<span title="${t[1]}">${t[0]}</span>`).join('')}</div>
+    <p class="setnote">Questions もんだい</p>
+    <div class="sets">${ch('type','pic','🖼️ Picture')}${ch('type','listen','👂 Listening')}${ch('type','mix','🔀 Mix')}</div>
+    <p class="setnote">Race length ゴールまで</p>
+    <div class="sets" style="margin-bottom:0">${ch('goal',5,'Short (5)')}${ch('goal',8,'Medium (8)')}${ch('goal',12,'Long (12)')}</div>
+  </div>
+  <div class="row"><button class="stk btn yellow" style="font-size:1.4rem;padding:14px 28px" onclick="startRace()">🏁 Start race!</button></div>`;
+}
+function startRace(){
+  S.R={teams:TEAMS.slice(0,S.rs.n).map(([e,name,color])=>({e,name,color,pos:0})),goal:S.rs.goal,type:S.rs.type,deck:[],winners:null};
+  nextRaceQ();S.screen='race';document.getElementById('homeBtn').hidden=false;render();window.scrollTo(0,0);
+}
+function nextRaceQ(){
+  const R=S.R;
+  if(!R.deck.length)R.deck=shuffle(pool());
+  R.q=R.deck.pop();
+  const src=pool().length>=4?pool():VERBS;
+  R.choices=shuffle([R.q,...shuffle(src.filter(v=>v!==R.q)).slice(0,3)]);
+  R.qtype=R.type==='mix'?(Math.random()<.5?'pic':'listen'):R.type;
+  R.phase='ask';R.marked=new Set();R.spoke=false;
+}
+const laneLeft=(pos,goal)=>`calc((100% - 4.4rem) * ${Math.min(pos/goal,1)})`;
+function renderTrack(){
+  const R=S.R;
+  return `<div class="stk track">${R.teams.map((t,k)=>`
+    <div class="lane" style="--tc:${t.color}">
+      <span class="lane-score" id="score${k}">${t.pos}</span>
+      <div class="runway"><span class="runner" id="runner${k}" style="left:${laneLeft(t.pos,R.goal)}"><span class="r-in">${t.e}</span></span><span class="flag">🏁</span></div>
+    </div>`).join('')}</div>`;
+}
+function renderRace(){
+  const R=S.R;if(R.winners)return renderRaceWin();
+  const q=R.q,reveal=R.phase==='mark',L='ABCD';
+  const prompt=R.qtype==='pic'
+    ?`<button class="hintbtn" onclick="S.hint=!S.hint;render()">${S.hint?'日本語 ON':'日本語 OFF'}</button>
+      <div class="emoji" style="font-size:clamp(4rem,14vw,6rem)">${q.e}</div>${S.hint?`<div class="ja" style="font-size:1.4rem">${q.ja}</div>`:''}
+      <div class="tap">Which word? どの英語かな？</div>`
+    :`<button class="stk listen-btn" onclick="say('${q.en}')" aria-label="Play the word">🔊</button>
+      <div class="tap" style="margin-top:10px">Listen and choose. きいて、えらぼう。</div>`;
+  const choices=R.choices.map((c,k)=>{
+    const st=reveal?(c===q?'right':'wrong'):'';
+    const body=R.qtype==='pic'?c.en:`<span class="ce">${c.e}</span><span class="cj">${c.ja}</span>${reveal?`<span class="cj">${c.en}</span>`:''}`;
+    return `<div class="stk choice ${st}"><span class="letter">${L[k]}</span>${body}</div>`;
+  }).join('');
+  const controls=reveal
+    ?`<p class="setnote" style="text-align:center">Who got it right? せいかいしたチームをタップ！</p>
+      <div class="row" style="margin-bottom:14px">${R.teams.map((t,k)=>`<button class="chip team-chip" style="--tc:${t.color}" aria-pressed="${R.marked.has(k)}" onclick="toggleMark(${k})">${t.e} ${t.name}</button>`).join('')}</div>
+      <div class="row"><button class="stk btn yellow" style="font-size:1.3rem" onclick="moveRace()">🏃 Move!</button></div>`
+    :`<div class="row"><button class="stk btn yellow" style="font-size:1.3rem" onclick="revealRace()">✅ Show answer</button></div>`;
+  app.innerHTML=`${renderTrack()}
+  <div class="stk prompt" style="min-height:170px">${prompt}${reveal?HANA:''}</div>
+  <div class="choices">${choices}</div>
+  <div style="margin-top:18px">${controls}</div>`;
+  if(R.qtype==='listen'&&!R.spoke){R.spoke=true;setTimeout(()=>say(q.en),300)}
+}
+function toggleMark(k){const m=S.R.marked;m.has(k)?m.delete(k):m.add(k);render()}
+function revealRace(){S.R.phase='mark';render();say(S.R.q.en)}
+function moveRace(){
+  const R=S.R,movers=[...R.marked];
+  document.querySelectorAll('#app button').forEach(b=>b.disabled=true);
+  movers.forEach(k=>{
+    const t=R.teams[k];t.pos=Math.min(t.pos+1,R.goal);
+    const el=document.getElementById('runner'+k);
+    if(el){el.style.left=laneLeft(t.pos,R.goal);el.classList.add('hop')}
+    const sc=document.getElementById('score'+k);if(sc)sc.textContent=t.pos;
+  });
+  setTimeout(()=>{
+    const w=R.teams.filter(t=>t.pos>=R.goal);
+    if(w.length){R.winners=w;say(w.map(t=>t.name).join(' and ')+(w.length>1?' win!':' wins!'))}
+    else nextRaceQ();
+    render();
+  },movers.length?900:50);
+}
+function renderRaceWin(){
+  const R=S.R,ranked=R.teams.slice().sort((a,b)=>b.pos-a.pos),w=R.winners;
+  app.innerHTML=`${renderTrack()}
+  <div class="stk result">
+    <div style="position:relative;display:inline-block;padding:16px 34px"><div style="font-size:5rem;line-height:1.1">${w.map(t=>t.e).join(' ')}</div>${HANA}</div>
+    <h2>${w.map(t=>t.name).join(' & ')} ${w.length>1?'win':'wins'}! 🏆</h2>
+    <p class="sub" style="margin-top:4px">${w.length>1?'It’s a tie! ひきわけ！':'おめでとう！'}</p>
+    <div class="ranks">${ranked.map(t=>`<div>${t.e} ${t.name}: ${t.pos}</div>`).join('')}</div>
+    <div class="row">
+      <button class="stk btn yellow" onclick="startRace()">🔁 Race again</button>
+      <button class="stk btn" onclick="go('raceSetup')">⚙️ Change settings</button>
+      <button class="stk btn" onclick="go('home')">🏠 Home</button>
+    </div>
+  </div>`;
+}
+
+/* ---------- WORD LIST ---------- */
+function renderList(){
+  app.innerHTML=`
+  <h2>Word list: ${setName()}</h2>
+  <p class="sub">Tap a word to hear it. タップすると音が出るよ。</p>
+  <div class="list">${pool().map(v=>`<button class="stk tile" onclick="say('${v.en}')"><span class="te">${v.e}</span><span class="tn">${v.en}</span><span class="tj">${v.ja}</span></button>`).join('')}</div>`;
+}
+
+render();
+</script>
+</body>
+</html>
